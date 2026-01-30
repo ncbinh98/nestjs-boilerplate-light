@@ -7,14 +7,17 @@ import { databaseConfig } from './config/database.config';
 import { UtilsModule } from './shared/utils/utils.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RedisModule } from './infra/redis/redis.module';
+import { redisConfig } from './config/redis.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // no need to import everywhere
-      load: [databaseConfig],
+      load: [databaseConfig, redisConfig],
     }),
     DatabaseModule,
+    RedisModule,
     UtilsModule,
     UsersModule,
     AuthModule,

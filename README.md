@@ -11,6 +11,7 @@ A lightweight, production-ready NestJS boilerplate featuring JWT authentication,
 - **Architecture**: Clean, modular architecture following NestJS best practices.
 - **Validation**: Strict input validation using `class-validator` and `class-transformer`.
 - **Configuration**: Environment-based configuration via `@nestjs/config`.
+- **Cache & Storage**: Global Redis integration using `ioredis`.
 
 ## 🛠️ Tech Stack
 
@@ -19,6 +20,7 @@ A lightweight, production-ready NestJS boilerplate featuring JWT authentication,
 - **ORM**: [TypeORM](https://typeorm.io/)
 - **Database**: [PostgreSQL](https://www.postgresql.org/)
 - **Auth**: [Passport.js](https://www.passportjs.org/) (JWT)
+- **Cache**: [ioredis](https://github.com/redis/ioredis)
 
 ## 📦 Quick Start
 
@@ -69,14 +71,38 @@ npm run start:prod
 
 ## ⚙️ Environment Variables
 
-| Variable      | Description                | Default     |
-| ------------- | -------------------------- | ----------- |
-| `DB_HOST`     | Database host              | `localhost` |
-| `DB_PORT`     | Database port              | `5432`      |
-| `DB_USERNAME` | Database user              | -           |
-| `DB_PASSWORD` | Database password          | -           |
-| `DB_NAME`     | Database name              | -           |
-| `JWT_SECRET`  | Secret key for JWT signing | -           |
+| Variable         | Description                | Default     |
+| ---------------- | -------------------------- | ----------- |
+| `DB_HOST`        | Database host              | `localhost` |
+| `DB_PORT`        | Database port              | `5432`      |
+| `DB_USERNAME`    | Database user              | -           |
+| `DB_PASSWORD`    | Database password          | -           |
+| `DB_NAME`        | Database name              | -           |
+| `JWT_SECRET`     | Secret key for JWT signing | -           |
+| `REDIS_HOST`     | Redis host                 | `localhost` |
+| `REDIS_PORT`     | Redis port                 | `6379`      |
+| `REDIS_PASSWORD` | Redis password             | -           |
+| `REDIS_DB`       | Redis database index       | `0`         |
+
+## 📦 Using Redis
+
+Inject the `REDIS_CLIENT` anywhere in your application:
+
+```typescript
+import { Inject, Injectable } from '@nestjs/common';
+import Redis from 'ioredis';
+import { REDIS_CLIENT } from 'src/infra/redis/redis.module';
+
+@Injectable()
+export class MyService {
+  constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
+
+  async someMethod() {
+    await this.redis.set('key', 'value');
+    const val = await this.redis.get('key');
+  }
+}
+```
 
 ## 📄 License
 
